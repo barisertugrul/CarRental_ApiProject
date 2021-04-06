@@ -11,17 +11,25 @@ using Entities.Concrete;
 using Entities.DTOs;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using Business.Adapters.PaymentAdapters;
+using Core.Aspects.Autofac.Transaction;
 
 namespace Business.Concrete
 {
     public class RentalManager : IRentalService
     {
         IRentalDal _rentalDal;
+        IBankPosService _bankPosService;
+        ICreditCardService _creditCardManager;
 
-        public RentalManager(IRentalDal rentalDal)
+
+        public RentalManager(IRentalDal rentalDal, IBankPosService bankPosService, ICreditCardService creditCardManager)
         {
             _rentalDal = rentalDal;
+            _bankPosService = bankPosService;
+            _creditCardManager = creditCardManager;
         }
 
         [ValidationAspect(typeof(RentalValidator))]
@@ -50,15 +58,53 @@ namespace Business.Concrete
             return new SuccessResult();
         }
 
-        public IResult IsRentableCar(int carId)
+        [ValidationAspect(typeof(RentalValidator))]
+        [ValidationAspect(typeof(CreditCardExtendValidator))]
+        [TransactionScopeAspect]
+        public IResult RentalOrder(Rental rental, CreditCardExtend creditCard, double amount, bool saveCard = false)
         {
-            var result = _rentalDal.GetAll(r => r.CarId == carId && r.ReturnDate == null);
-            if(result != null && result.Count > 0)
+            IResult result = Add(rental);
+            if (!result.Success)
             {
-                return new ErrorResult();
+                return new ErrorResult(result.Message);
             }
-            return new SuccessResult();
+
+            if (saveCard)
+            {
+                CreditCard newCard = new CreditCard()
+                {
+                    CardName = creditCard.CardName,
+                    CardHolder = creditCard.CardHolder,
+                    CardNumber = creditCard.CardNumber,
+                    CustomerId = creditCard.CustomerId,
+                    ExpYear = creditCard.ExpYear,
+                    ExpMonth = creditCard.ExpMonth
+                };
+                result = _creditCardManager.Add(newCard);
+                if (!result.Success)
+                {
+                    return new ErrorResult(result.Message);
+                }
+            }
+
+            result = _bankPosService.Pay(creditCard, amount);
+            if (!result.Success)
+            {
+                return new ErrorResult(result.Message);
+            }
+
+            return new SuccessResult(Messages.RentAndPay);
         }
+
+        //public IResult IsRentableCar(int carId)
+        //{
+        //    var result = _rentalDal.GetAll(r => r.CarId == carId && r.ReturnDate == null);
+        //    if(result != null && result.Count > 0)
+        //    {
+        //        return new ErrorResult();
+        //    }
+        //    return new SuccessResult();
+        //}
 
         [CacheRemoveAspect("IRentalService.Get")]
         [CacheRemoveAspect("ICarService.Get")]
@@ -132,13 +178,20 @@ namespace Business.Concrete
             return new SuccessDataResult<RentalDetailDto>(_rentalDal.GetDetails(r => r.Id == id));
         }
 
-        private IResult IsRentableCar(Rental rental, bool isUpdate = false)
+        public IResult IsRentableCar(Rental rental, bool isUpdate = false)
         {
             List<Rental> rentalDetail = (isUpdate)
                 ? _rentalDal.GetAll(r => r.CarId == rental.CarId && r.ReturnDate == null && r.Id != rental.Id)
                 : _rentalDal.GetAll(r => r.CarId == rental.CarId && r.ReturnDate == null);
-            if (rentalDetail != null && rentalDetail.Count > 0) {
-                return new ErrorResult();
+            if (rentalDetail != null && rentalDetail.Count > 0)
+            {
+                rentalDetail = rentalDetail.Where(r =>
+                    (r.RentStartDate <= rental.RentStartDate && r.RentEndDate >= rental.RentStartDate) ||
+                    r.RentStartDate <= rental.RentEndDate && r.RentEndDate >= rental.RentEndDate).ToList();
+                if (rentalDetail != null && rentalDetail.Count > 0)
+                {
+                    return new ErrorResult();
+                }
             }
             return new SuccessResult();
         }

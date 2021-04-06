@@ -106,5 +106,7 @@ namespace Business.Constants
         public static string SuccessfulLogin = "Login successful";
         public static string UserAlreadyExists = "User already exists";
         public static string AccessTokenCreated = "Token created";
+        public static string NewCardAdded ="New credit card added";
+        public static string RentAndPay = "The rental order has been received and the payment has been processed.";
     }
 }

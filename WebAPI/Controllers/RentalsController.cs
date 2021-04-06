@@ -119,6 +119,28 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
+        [HttpPost("rentalorder")]
+        public IActionResult RentalOrder(Rental rental, CreditCardExtend creditCard, double amount, bool saveCard = false)
+        {
+            var result = _rentalService.RentalOrder(rental, creditCard, amount, saveCard);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
+        [HttpPost("isrentable")]
+        public IActionResult IsRentable(Rental rental, bool isUpdate = false)
+        {
+            var result = _rentalService.IsRentableCar(rental, isUpdate);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
         [HttpPost("update")]
         public IActionResult Update(Rental rental)
         {

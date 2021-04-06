@@ -71,7 +71,6 @@ namespace Business.Concrete
         public IDataResult<List<Car>> GetAll()
         {
             var fileFolderPath = AppContext.BaseDirectory + @"Images";
-            Console.WriteLine("xxxxxxxxxxxxxxxx Path xxxxxxxxxxxx:" + fileFolderPath);
 
             return new SuccessDataResult<List<Car>>(_carDal.GetAll());
         }
@@ -138,7 +137,11 @@ namespace Business.Concrete
         public IDataResult<List<CarDetailDto>> GetCarDetailsByBrandAndColorId(int brandId, int colorId)
         {
             Expression<Func<Car,Boolean>> filter;
-            if (colorId > 0 && brandId > 0)
+            if (colorId == 0 && brandId == 0)
+            {
+                return new SuccessDataResult<List<CarDetailDto>>(_carDal.GetAllDetails(_defaultImagePath));
+            }
+            else if (colorId > 0 && brandId > 0)
             {
                 filter = c => c.BrandId == brandId && c.ColorId == colorId;
             }

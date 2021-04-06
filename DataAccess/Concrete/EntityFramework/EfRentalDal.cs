@@ -36,7 +36,8 @@ namespace DataAccess.Concrete.EntityFramework
                                  LastName = u.LastName,
                                  Email = u.Email,
                                  CompanyName = c.CompanyName,
-                                 RentDate = r.RentDate,
+                                 RentStartDate = r.RentStartDate,
+                                 RentEndDate = r.RentEndDate,
                                  ReturnDate = r.ReturnDate
                              };
                 return result.ToList();
@@ -73,7 +74,8 @@ namespace DataAccess.Concrete.EntityFramework
                                  LastName = u.LastName,
                                  Email = u.Email,
                                  CompanyName = c.CompanyName,
-                                 RentDate = r.RentDate,
+                                 RentStartDate = r.RentStartDate,
+                                 RentEndDate = r.RentEndDate,
                                  ReturnDate = r.ReturnDate
                              };
                 return result.ToList();

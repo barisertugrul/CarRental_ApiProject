@@ -61,24 +61,24 @@ namespace Business.Concrete
         [ValidationAspect(typeof(RentalValidator))]
         [ValidationAspect(typeof(CreditCardExtendValidator))]
         [TransactionScopeAspect]
-        public IResult RentalOrder(Rental rental, CreditCardExtend creditCard, double amount, bool saveCard = false)
+        public IResult RentalOrder(RentalOrder rentalOrder)
         {
-            IResult result = Add(rental);
+            IResult result = Add(rentalOrder.RentalContent);
             if (!result.Success)
             {
                 return new ErrorResult(result.Message);
             }
 
-            if (saveCard)
+            if (rentalOrder.IsSave)
             {
                 CreditCard newCard = new CreditCard()
                 {
-                    CardName = creditCard.CardName,
-                    CardHolder = creditCard.CardHolder,
-                    CardNumber = creditCard.CardNumber,
-                    CustomerId = creditCard.CustomerId,
-                    ExpYear = creditCard.ExpYear,
-                    ExpMonth = creditCard.ExpMonth
+                    CardName = rentalOrder.PayCard.CardName,
+                    CardHolder = rentalOrder.PayCard.CardHolder,
+                    CardNumber = rentalOrder.PayCard.CardNumber,
+                    CustomerId = rentalOrder.PayCard.CustomerId,
+                    ExpYear = rentalOrder.PayCard.ExpYear,
+                    ExpMonth = rentalOrder.PayCard.ExpMonth
                 };
                 result = _creditCardManager.Add(newCard);
                 if (!result.Success)
@@ -87,7 +87,7 @@ namespace Business.Concrete
                 }
             }
 
-            result = _bankPosService.Pay(creditCard, amount);
+            result = _bankPosService.Pay(rentalOrder.PayCard, rentalOrder.Amount);
             if (!result.Success)
             {
                 return new ErrorResult(result.Message);

@@ -120,9 +120,9 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("rentalorder")]
-        public IActionResult RentalOrder(Rental rental, CreditCardExtend creditCard, double amount, bool saveCard = false)
+        public IActionResult RentalOrder(RentalOrder rentalOrder)
         {
-            var result = _rentalService.RentalOrder(rental, creditCard, amount, saveCard);
+            var result = _rentalService.RentalOrder(rentalOrder);
             if (result.Success)
             {
                 return Ok(result);

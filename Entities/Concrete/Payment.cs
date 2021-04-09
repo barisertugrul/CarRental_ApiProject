@@ -4,11 +4,10 @@ using System.Text;
 
 namespace Entities.Concrete
 {
-    public class RentalOrder
+    public class Payment
     {
-        public Rental RentalContent { get; set; }
+        public int RentalId { get; set; }
         public CreditCardExtend PayCard { get; set; }
-        public double Amount { get; set; }
         public bool IsSave { get; set; }
     }
 }

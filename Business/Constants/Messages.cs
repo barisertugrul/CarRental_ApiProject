@@ -108,5 +108,8 @@ namespace Business.Constants
         public static string AccessTokenCreated = "Token created";
         public static string NewCardAdded ="New credit card added";
         public static string RentAndPay = "The rental order has been received and the payment has been processed.";
+        public static string ExistCard = "The credit card has already been saved.";
+        public static string PaymentComplete = "The payment is complete.";
+        public static string PayButNotSave = "The payment was completed, but the card information could not be saved.";
     }
 }

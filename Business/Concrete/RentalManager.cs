@@ -21,15 +21,11 @@ namespace Business.Concrete
     public class RentalManager : IRentalService
     {
         IRentalDal _rentalDal;
-        IBankPosService _bankPosService;
-        ICreditCardService _creditCardManager;
 
 
-        public RentalManager(IRentalDal rentalDal, IBankPosService bankPosService, ICreditCardService creditCardManager)
+        public RentalManager(IRentalDal rentalDal)
         {
             _rentalDal = rentalDal;
-            _bankPosService = bankPosService;
-            _creditCardManager = creditCardManager;
         }
 
         [ValidationAspect(typeof(RentalValidator))]
@@ -56,44 +52,6 @@ namespace Business.Concrete
 
             _rentalDal.Add(rental);
             return new SuccessResult();
-        }
-
-        [ValidationAspect(typeof(RentalValidator))]
-        [ValidationAspect(typeof(CreditCardExtendValidator))]
-        [TransactionScopeAspect]
-        public IResult RentalOrder(RentalOrder rentalOrder)
-        {
-            IResult result = Add(rentalOrder.RentalContent);
-            if (!result.Success)
-            {
-                return new ErrorResult(result.Message);
-            }
-
-            if (rentalOrder.IsSave)
-            {
-                CreditCard newCard = new CreditCard()
-                {
-                    CardName = rentalOrder.PayCard.CardName,
-                    CardHolder = rentalOrder.PayCard.CardHolder,
-                    CardNumber = rentalOrder.PayCard.CardNumber,
-                    CustomerId = rentalOrder.PayCard.CustomerId,
-                    ExpYear = rentalOrder.PayCard.ExpYear,
-                    ExpMonth = rentalOrder.PayCard.ExpMonth
-                };
-                result = _creditCardManager.Add(newCard);
-                if (!result.Success)
-                {
-                    return new ErrorResult(result.Message);
-                }
-            }
-
-            result = _bankPosService.Pay(rentalOrder.PayCard, rentalOrder.Amount);
-            if (!result.Success)
-            {
-                return new ErrorResult(result.Message);
-            }
-
-            return new SuccessResult(Messages.RentAndPay);
         }
 
         //public IResult IsRentableCar(int carId)

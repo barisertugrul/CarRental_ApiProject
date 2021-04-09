@@ -15,6 +15,6 @@ namespace Entities.Concrete
         public DateTime RentStartDate { get; set; }
         public DateTime RentEndDate { get; set; }
         public DateTime? ReturnDate { get; set; }
-        public bool Comfirm { get; set; }
+        public bool Confirm { get; set; }
     }
 }

@@ -38,7 +38,8 @@ namespace DataAccess.Concrete.EntityFramework
                                  CompanyName = c.CompanyName,
                                  RentStartDate = r.RentStartDate,
                                  RentEndDate = r.RentEndDate,
-                                 ReturnDate = r.ReturnDate
+                                 ReturnDate = r.ReturnDate,
+                                 Confirm = r.Confirm
                              };
                 return result.ToList();
             }
@@ -76,7 +77,8 @@ namespace DataAccess.Concrete.EntityFramework
                                  CompanyName = c.CompanyName,
                                  RentStartDate = r.RentStartDate,
                                  RentEndDate = r.RentEndDate,
-                                 ReturnDate = r.ReturnDate
+                                 ReturnDate = r.ReturnDate,
+                                 Confirm = r.Confirm
                              };
                 return result.ToList();
             }

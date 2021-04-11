@@ -39,7 +39,8 @@ namespace DataAccess.Concrete.EntityFramework
                                  RentStartDate = r.RentStartDate,
                                  RentEndDate = r.RentEndDate,
                                  ReturnDate = r.ReturnDate,
-                                 Confirm = r.PayConfirm
+                                 Amount = r.Amount,
+                                 PayConfirm = r.PayConfirm
                              };
                 return result.ToList();
             }
@@ -78,7 +79,8 @@ namespace DataAccess.Concrete.EntityFramework
                                  RentStartDate = r.RentStartDate,
                                  RentEndDate = r.RentEndDate,
                                  ReturnDate = r.ReturnDate,
-                                 Confirm = r.PayConfirm
+                                 Amount = r.Amount,
+                                 PayConfirm = r.PayConfirm
                              };
                 return result.ToList();
             }

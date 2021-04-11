@@ -35,6 +35,11 @@ namespace Business.Concrete
                 return new ErrorResult(rentalResult.Message);
             }
 
+            if (rentalResult.Data.PayConfirm)
+            {
+                return new ErrorResult(Messages.ExistPayConfirm);
+            }
+
             var result = _bankPosService.Pay(payment.PayCard, rentalResult.Data.Amount);
             if (!result.Success)
             {
@@ -52,7 +57,6 @@ namespace Business.Concrete
             {
                 CreditCard newCard = new CreditCard()
                 {
-                    CardName = payment.PayCard.CardName,
                     CardHolder = payment.PayCard.CardHolder,
                     CardNumber = payment.PayCard.CardNumber,
                     CustomerId = payment.PayCard.CustomerId,
@@ -62,7 +66,7 @@ namespace Business.Concrete
                 result = _creditCardService.Add(newCard);
                 if (!result.Success)
                 {
-                    return new ErrorResult(Messages.PayButNotSave);
+                    return new ErrorResult(result.Message);
                 }
             }
             return new SuccessResult(Messages.PaymentComplete);

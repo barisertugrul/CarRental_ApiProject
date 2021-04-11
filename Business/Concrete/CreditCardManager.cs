@@ -38,17 +38,15 @@ namespace Business.Concrete
             return new SuccessDataResult<List<CreditCard>>(_creditCardDal.GetAll(c => c.CustomerId == customerId));
         }
 
-        public IDataResult<List<CreditCard>> GetCardsByName(string cardName)
-        {
-            return new SuccessDataResult<List<CreditCard>>(_creditCardDal.GetAll(c => c.CardName == cardName));
-        }
-
-
         [ValidationAspect(typeof(CreditCardValidator))]
         [CacheRemoveAspect("ICreditCardService.Get")]
         public IResult Add(CreditCard creditCard)
         {
-            //TODO Kayıtlı kart kontrolü
+            IResult result = IsExistCard(creditCard);
+            if (!result.Success)
+            {
+                return new ErrorResult(Messages.ExistCard);
+            }
             _creditCardDal.Add(creditCard);
             return new SuccessResult(Messages.NewCardAdded);
         }

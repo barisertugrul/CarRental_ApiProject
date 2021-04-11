@@ -5,25 +5,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Business.Abstract;
-using Entities.Concrete;
 
 namespace WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PaymentsController : ControllerBase
+    public class CreditCardsController : ControllerBase
     {
-        private IPaymentService _paymentService;
+        private ICreditCardService _cardService;
 
-        public PaymentsController(IPaymentService paymentService)
+        public CreditCardsController(ICreditCardService cardService)
         {
-            _paymentService = paymentService;
+            _cardService = cardService;
         }
 
-        [HttpPost("pay")]
-        public IActionResult Pay(Payment payment)
+        [HttpGet("getbycustomerid")]
+        public IActionResult GetByCustomerId(int customerId)
         {
-            var result = _paymentService.Pay(payment);
+            var result = _cardService.GetCardsByCustomerId(customerId);
             if (result.Success)
             {
                 return Ok(result);

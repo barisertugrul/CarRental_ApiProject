@@ -20,6 +20,7 @@ namespace Entities.DTOs
         public DateTime RentStartDate { get; set; }
         public DateTime RentEndDate { get; set; }
         public DateTime? ReturnDate { get; set; }
-        public bool Confirm { get; set; }
+        public decimal Amount { get; set; }
+        public bool PayConfirm { get; set; }
     }
 }

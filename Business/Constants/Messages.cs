@@ -111,5 +111,6 @@ namespace Business.Constants
         public static string ExistCard = "The credit card has already been saved.";
         public static string PaymentComplete = "The payment is complete.";
         public static string PayButNotSave = "The payment was completed, but the card information could not be saved.";
+        public static string ExistPayConfirm = "This payment has already been made.";
     }
 }

@@ -9,6 +9,6 @@ namespace Business.Abstract
 {
     public interface IBankPosService
     {
-        IResult Pay(CreditCardExtend creditCard, double amount);
+        IResult Pay(CreditCardExtend creditCard, decimal amount);
     }
 }

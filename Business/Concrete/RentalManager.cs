@@ -31,7 +31,7 @@ namespace Business.Concrete
         [ValidationAspect(typeof(RentalValidator))]
         [CacheRemoveAspect("IRentalService.Get")]
         [CacheRemoveAspect("ICarService.Get")]
-        public IResult Add(Rental rental)
+        public IDataResult<int> Add(Rental rental)
         {
             //if (CarRentedControl(rental.CarId).Success == false)
             //{
@@ -47,11 +47,11 @@ namespace Business.Concrete
             IResult result = IsRentableCar(rental);
             if (!result.Success)
             {
-                return new ErrorResult(Messages.ExistCarRental);
+                return new ErrorDataResult<int>(0,Messages.ExistCarRental);
             }
 
-            _rentalDal.Add(rental);
-            return new SuccessResult();
+            Rental addedRental = _rentalDal.Add(rental);
+            return new SuccessDataResult<int>(addedRental.Id);
         }
 
         //public IResult IsRentableCar(int carId)
@@ -83,6 +83,12 @@ namespace Business.Concrete
         public IDataResult<Rental> GetById(int id)
         {
             return new SuccessDataResult<Rental>(_rentalDal.Get(r => r.Id == id));
+        }
+
+        [CacheAspect]
+        public IDataResult<RentalDetailDto> GetDetailsById(int id)
+        {
+            return new SuccessDataResult<RentalDetailDto>(_rentalDal.GetDetails(r => r.Id == id));
         }
 
         [CacheAspect]
@@ -128,12 +134,6 @@ namespace Business.Concrete
 
             _rentalDal.Update(rental);
             return new SuccessResult();
-        }
-
-        [CacheAspect]
-        public IDataResult<RentalDetailDto> GetRentalDetailsById(int id)
-        {
-            return new SuccessDataResult<RentalDetailDto>(_rentalDal.GetDetails(r => r.Id == id));
         }
 
         public IResult IsRentableCar(Rental rental, bool isUpdate = false)
